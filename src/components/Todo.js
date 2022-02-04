@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from 'react';
+import { TaskContext } from '../context';
 
 export default function Todo(props) {
 
   const [isEditing, setEditing] = useState(false);
   const [newName, setNewName] = useState('');
+  const { dispatch } = useContext(TaskContext);
 
   const editFieldRef = useRef(null);
   const editButtonRef = useRef(null);
@@ -24,8 +26,15 @@ export default function Todo(props) {
   
   function handleSubmit(e) {
     e.preventDefault();
-    props.editTask(props.id, newName);
-    setNewName("");
+    dispatch({
+      type: 'EDIT_TASK',
+      task: {
+        id: props.id,
+        name: newName,
+        completed: props.completed
+      }
+    });
+    setNewName('');
     setEditing(false);
   }
 
@@ -34,7 +43,7 @@ export default function Todo(props) {
       editFieldRef.current.focus();
     }
     if (wasEditing && !isEditing) {
-      editButtonRef.current.focus();
+      // editButtonRef.current.focus();
     }
   }, [wasEditing, isEditing]);
   
@@ -81,29 +90,35 @@ export default function Todo(props) {
   const viewTemplate = (
     <div className="stack-small">
       <div className="c-cb">
-          <input
-            id={props.id}
-            type="checkbox"
-            defaultChecked={props.completed}
-            onChange={() => props.toggleTaskCompleted(props.id)}
-          />
-          <label className="todo-label" htmlFor={props.id}>
-            {props.name}
-          </label>
-        </div>
-        <div className="btn-group">
+        <input
+          id={props.id}
+          type="checkbox"
+          defaultChecked={props.completed}
+          onChange={() => dispatch({
+            type: 'TOGGLE_TASK',
+            id: props.id
+          })}
+        />
+        <label className="todo-label" htmlFor={props.id}>
+          {props.name}
+        </label>
+      </div>
+      <div className="btn-group">
         <button type="button" className="btn" onClick={() => setEditing(true)}>
           Edit <span className="visually-hidden">{props.name}</span>
         </button>
 
-          <button
-            type="button"
-            className="btn btn__danger"
-            onClick={() => props.deleteTask(props.id)}
-          >
+        <button
+          type="button"
+          className="btn btn__danger"
+          onClick={() => dispatch({
+            type: 'DELETE_TASK',
+            id: props.id
+          })}
+        >
             Delete <span className="visually-hidden">{props.name}</span>
-          </button>
-        </div>
+        </button>
+      </div>
     </div>
   );
   

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from 'react';
+import { TaskContext } from '../context';
 
-function Form(props) {
-  const [name, setName] = useState("");
+function Form() {
+  const [name, setName] = useState('');
+  const { dispatch } = useContext(TaskContext);
 
   function handleChange(e) {
     setName(e.target.value);
@@ -9,8 +11,13 @@ function Form(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    props.addTask(name);
-    setName("");
+    dispatch({
+      type: 'ADD_TASK', 
+      task: {
+        name
+      }
+    });
+    setName('');
   }
   return (
     <form onSubmit={handleSubmit}>
