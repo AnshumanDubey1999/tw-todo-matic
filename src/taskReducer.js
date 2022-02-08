@@ -35,7 +35,6 @@ function deleteTask(tasks, id) {
   return remainingTasks;
 }
   
-  
 export const taskReducer = (state, action) => {
   switch (action.type) {
   case 'ADD_TASK':
